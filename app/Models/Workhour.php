@@ -1,0 +1,15 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Workhour extends Model
+{
+    public $fillable = [
+        'arr'
+    ];
+    public $casts = [
+        'arr' => 'array'
+    ];
+}
