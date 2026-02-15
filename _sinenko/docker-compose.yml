@@ -1,0 +1,49 @@
+services:
+    php:
+        build:
+            context: ../
+            dockerfile: _sinenko/docker/php/Dockerfile
+        container_name: laravel_php
+        environment:
+            - DB_DATABASE=app
+            - DB_USERNAME=app
+            - DB_PASSWORD=password
+        volumes:
+            - /var/www/html/vendor
+        networks:
+            - laravel
+        depends_on:
+            - postgres
+    postgres:
+        image: postgres:16
+        container_name: laravel_postgres
+        environment:
+            - POSTGRES_DB=app
+            - POSTGRES_USER=app
+            - POSTGRES_PASSWORD=password
+        volumes:
+            - pg_data:/var/lib/postgresql/data
+        networks:
+            - laravel
+        ports:
+            - "127.0.0.1:5432:5432"
+    nginx:
+        image: nginx:alpine
+        container_name: laravel_nginx
+        ports:
+            - "80:80"
+            # - "443:443"
+        volumes:
+            - ../:/var/www/html
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+        networks:
+            - laravel
+        depends_on:
+            - php
+
+volumes:
+    pg_data:
+
+networks:
+    laravel:
+        driver: bridge
